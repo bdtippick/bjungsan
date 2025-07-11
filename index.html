@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>라이더 정산 프로그램램</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>라이더 정산 프로그램</h1>
+            <p>엑셀 파일을 업로드하여 라이더 정산 정보를 확인하세요</p>
+        </div>
+
+        <div class="upload-section">
+            <div class="upload-zone" id="uploadZone">
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">엑셀 파일을 드래그 앤 드롭하거나 클릭하여 업로드</div>
+                <button class="btn" onclick="event.stopPropagation(); document.getElementById('fileInput').click()">
+                    파일 선택
+                </button>
+                <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls" />
+            </div>
+            <div id="message"></div>
+        </div>
+
+        <!-- 전체 데이터 보기 섹션 -->
+        <div class="overview-section" id="overviewSection" style="display: none;">
+            <div class="overview-header">
+                <h2>전체 라이더 데이터</h2>
+                <p>지점 프로모션, 수수료 단가, 리스비를 입력한 후 저장하세요<br>
+                   <small>※ 총 배달료 = 배달료 + 추가할증 + 지점프로모션 - 수수료 | 라이더 정산금액 = 총 배달료 - 공제성 항목 | 최종 지급액 = 라이더 정산금액 - 원천징수세액 - 리스비</small></p>
+                <div class="bulk-commission-controls">
+                    <label for="bulkCommission">수수료 단가 일괄 입력:</label>
+                    <select id="bulkCommission" onchange="applyBulkCommission()">
+                        <option value="">선택하세요</option>
+                        <option value="50">건당 50원</option>
+                        <option value="100">건당 100원</option>
+                        <option value="150">건당 150원</option>
+                        <option value="200">건당 200원</option>
+                        <option value="250">건당 250원</option>
+                        <option value="300">건당 300원</option>
+                        <option value="350">건당 350원</option>
+                        <option value="400">건당 400원</option>
+                        <option value="450">건당 450원</option>
+                        <option value="500">건당 500원</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table id="overviewTable" class="overview-table">
+                    <thead>
+                        <tr>
+                            <th>라이더 ID</th>
+                            <th>라이더명</th>
+                            <th>처리건수</th>
+                            <th>배달료</th>
+                            <th>본사 프로모션(=추가할증)</th>
+                            <th>지점 프로모션</th>
+                            <th>총 배달료</th>
+                            <th>수수료 (건당)</th>
+                            <th>리스비 (공제)</th>
+                            <th>라이더 정산금액</th>
+                            <th>원천징수세액</th>
+                            <th>최종 지급액</th>
+                        </tr>
+                    </thead>
+                    <tbody id="overviewTableBody">
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="button-container">
+                <button class="btn save-btn" onclick="saveAllData()">저장하고 개별 조회로 이동</button>
+                <button class="btn screenshot-all-btn" onclick="saveAllScreenshots()">📸 전체 라이더 스크린샷 저장</button>
+            </div>
+        </div>
+
+        <!-- 개별 조회 섹션 -->
+        <div class="data-section" id="dataSection" style="display: none;">
+            <div class="navigation-header">
+                <button class="btn back-btn" onclick="goBackToOverview()">← 전체 보기로 돌아가기</button>
+                <h2>개별 라이더 조회</h2>
+                <div class="screenshot-buttons">
+                    <button class="btn screenshot-btn" onclick="saveScreenshot()" style="display: none;">📸 현재 라이더 저장</button>
+                    <button class="btn screenshot-all-btn" onclick="saveAllScreenshots()">📸 전체 라이더 저장</button>
+                </div>
+            </div>
+            
+            <div class="dropdown-container">
+                <label class="dropdown-label" for="riderSelect">라이더 선택:</label>
+                <select id="riderSelect" class="dropdown">
+                    <option value="">라이더를 선택하세요</option>
+                </select>
+            </div>
+
+            <div id="riderInfo" class="rider-info"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
